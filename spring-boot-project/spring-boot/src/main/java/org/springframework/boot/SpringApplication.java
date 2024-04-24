@@ -290,30 +290,45 @@ public class SpringApplication {
 	/**
 	 * Run the Spring application, creating and refreshing a new
 	 * {@link ApplicationContext}.
+	 *
 	 * @param args the application arguments (usually passed from a Java main method)
 	 * @return a running {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
+		// <1> 简单统计 run 启动过程的时长
 		long startTime = System.nanoTime();
 		DefaultBootstrapContext bootstrapContext = createBootstrapContext();
 		ConfigurableApplicationContext context = null;
+		// <2> 配置 headless 属性
 		configureHeadlessProperty();
+		// 获得 SpringApplicationRunListener 的数组，并启动监听
 		SpringApplicationRunListeners listeners = getRunListeners(args);
 		listeners.starting(bootstrapContext, this.mainApplicationClass);
 		try {
+			// <3> 创建  ApplicationArguments 对象
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			// <4> 加载属性配置。执行完成后，所有的 environment 的属性都会加载进来，包括 application.properties 和外部的属性配置。
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, bootstrapContext, applicationArguments);
+			// <5> 打印 Spring Banner
 			Banner printedBanner = printBanner(environment);
+			// <6> 创建 Spring 容器
 			context = createApplicationContext();
 			context.setApplicationStartup(this.applicationStartup);
+			// <7> 主要是调用所有初始化类的 initialize 方法
 			prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+			// <8> 初始化 Spring 容器
 			refreshContext(context);
+			// <9> 执行 Spring 容器的初始化的后置逻辑。默认实现为空
 			afterRefresh(context, applicationArguments);
+			// <10> 停止统计时长
 			Duration timeTakenToStartup = Duration.ofNanos(System.nanoTime() - startTime);
+			// <11> 打印 Spring Boot 启动的时长日志
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass).logStarted(getApplicationLog(), timeTakenToStartup);
 			}
+			// <12> 通知 SpringApplicationRunListener 的数组，Spring 容器启动完成
 			listeners.started(context, timeTakenToStartup);
+			// <13> 调用 ApplicationRunner 或者 CommandLineRunner 的运行方法
 			callRunners(context, applicationArguments);
 		}
 		catch (Throwable ex) {
@@ -1285,12 +1300,14 @@ public class SpringApplication {
 	/**
 	 * Static helper that can be used to run a {@link SpringApplication} from the
 	 * specified source using default settings.
+	 *
 	 * @param primarySource the primary source to load
-	 * @param args the application arguments (usually passed from a Java main method)
+	 * @param args          the application arguments (usually passed from a Java main method)
 	 * @return the running {@link ApplicationContext}
 	 */
 	public static ConfigurableApplicationContext run(Class<?> primarySource, String... args) {
-		return run(new Class<?>[] { primarySource }, args);
+		// 创建 SpringApplication 对象，并执行运行。
+		return run(new Class<?>[]{primarySource}, args);
 	}
 
 	/**
