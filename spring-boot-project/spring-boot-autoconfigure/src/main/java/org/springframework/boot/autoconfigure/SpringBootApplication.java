@@ -51,6 +51,7 @@ import org.springframework.data.repository.Repository;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+// 只有在类上使用时才会有效，使用此注解声明出来的自定义注解，在使用时，如果注解在类上面时，子类会自动继承此注解，否则不会
 @Inherited
 @SpringBootConfiguration
 @EnableAutoConfiguration

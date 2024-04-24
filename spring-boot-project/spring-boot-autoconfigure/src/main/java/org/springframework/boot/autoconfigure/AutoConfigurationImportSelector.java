@@ -63,6 +63,8 @@ import org.springframework.util.StringUtils;
  * {@link DeferredImportSelector} to handle {@link EnableAutoConfiguration
  * auto-configuration}. This class can also be subclassed if a custom variant of
  * {@link EnableAutoConfiguration @EnableAutoConfiguration} is needed.
+ * 实现 DeferredImportSelector、BeanClassLoaderAware、ResourceLoaderAware、BeanFactoryAware、EnvironmentAware、Ordered 接口
+ * 处理 @EnableAutoConfiguration 注解的资源导入
  *
  * @author Phillip Webb
  * @author Andy Wilkinson
@@ -70,8 +72,8 @@ import org.springframework.util.StringUtils;
  * @author Madhura Bhave
  * @author Moritz Halbritter
  * @author Scott Frederick
- * @since 1.3.0
  * @see EnableAutoConfiguration
+ * @since 1.3.0
  */
 public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware,
 		ResourceLoaderAware, BeanFactoryAware, EnvironmentAware, Ordered {
@@ -115,6 +117,8 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 	/**
 	 * Return the {@link AutoConfigurationEntry} based on the {@link AnnotationMetadata}
 	 * of the importing {@link Configuration @Configuration} class.
+	 * 基于导入的 {@link Configuration @Configuration} 类的 {@link AnnotationMetadata} 返回 {@link AutoConfigurationEntry}。
+	 *
 	 * @param annotationMetadata the annotation metadata of the configuration class
 	 * @return the auto-configurations that should be imported
 	 */
@@ -171,14 +175,16 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 	/**
 	 * Return the auto-configuration class names that should be considered. By default,
 	 * this method will load candidates using {@link ImportCandidates}.
-	 * @param metadata the source metadata
+	 * 返回应考虑的自动配置类名。默认情况下，此方法将使用 {@link ImportCandidates} 加载候选对象
+	 *
+	 * @param metadata   the source metadata
 	 * @param attributes the {@link #getAttributes(AnnotationMetadata) annotation
-	 * attributes}
+	 *                   attributes}
 	 * @return a list of candidate configurations
 	 */
 	protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
 		List<String> configurations = ImportCandidates.load(AutoConfiguration.class, getBeanClassLoader())
-			.getCandidates();
+				.getCandidates();
 		Assert.notEmpty(configurations,
 				"No auto configuration classes found in "
 						+ "META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports. If you "
