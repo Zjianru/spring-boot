@@ -33,6 +33,7 @@ import org.springframework.boot.loader.jar.JarFile;
 /**
  * Base class for launchers that can start an application with a fully configured
  * classpath backed by one or more {@link Archive}s.
+ * 启动程序的基类，可以使用由一个或多个 {@link Archive} 支持的完全配置的类路径启动应用程序。
  *
  * @author Phillip Webb
  * @author Dave Syer
@@ -45,16 +46,21 @@ public abstract class Launcher {
 	/**
 	 * Launch the application. This method is the initial entry point that should be
 	 * called by a subclass {@code public static void main(String[] args)} method.
+	 * 启动应用程序。此方法是应由子类 {@code public static void main(String[] args)} 方法调用的初始入口点
+	 *
 	 * @param args the incoming arguments
 	 * @throws Exception if the application fails to launch
 	 */
 	protected void launch(String[] args) throws Exception {
 		if (!isExploded()) {
+			// <1> 注册 URL 协议的处理器
 			JarFile.registerUrlProtocolHandler();
 		}
+		// <2> 创建类加载器
 		ClassLoader classLoader = createClassLoader(getClassPathArchivesIterator());
 		String jarMode = System.getProperty("jarmode");
 		String launchClass = (jarMode != null && !jarMode.isEmpty()) ? JAR_MODE_LAUNCHER : getMainClass();
+		// <3> 执行启动类的 main 方法
 		launch(args, launchClass, classLoader);
 	}
 
@@ -135,6 +141,8 @@ public abstract class Launcher {
 		}
 		return (root.isDirectory() ? new ExplodedArchive(root) : new JarFileArchive(root));
 	}
+
+
 
 	/**
 	 * Returns if the launcher is running in an exploded mode. If this method returns

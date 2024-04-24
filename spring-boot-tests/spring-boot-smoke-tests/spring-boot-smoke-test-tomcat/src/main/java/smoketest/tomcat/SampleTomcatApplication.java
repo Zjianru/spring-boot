@@ -25,6 +25,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @SpringBootApplication
 public class SampleTomcatApplication {
 
@@ -48,6 +53,11 @@ public class SampleTomcatApplication {
 	}
 
 	public static void main(String[] args) {
+//		List<Map<String,Object>> objects = new ArrayList<>();
+//		Object o = objects;
+//		((List)o).add("111");
+//		((List)o).add(new HashMap<>());
+//		System.out.println(JSONUTULS.toJSONString(objects));
 		SpringApplication.run(SampleTomcatApplication.class, args);
 	}
 
